@@ -7,9 +7,9 @@
 
 using namespace std;
 typedef map<char, map<char, int>> Graph; //Граф для алгоритма
-Graph graph;
 
-bool bfs(Graph graph, char source, char sink, map<char, char>& path){
+
+bool bfs(Graph &graph, char source, char sink, map<char, char>& path){
     cout << endl;
     map<char,bool> visited; //Посещенные вершины
     queue<char> q_vertex;  //Очередь вершин
@@ -38,7 +38,7 @@ bool bfs(Graph graph, char source, char sink, map<char, char>& path){
     return visited[sink]; //Была ли достигнута финиш
 }
 
-void printResult(Graph graph, Graph flow_graph, int max_flow){           //Функция печати результата
+void printResult(Graph &graph, Graph flow_graph, int max_flow){           //Функция печати результата
     cout << "----------------------------------------------------------" << endl;
     int flow;
     cout <<"Максимальный поток = "<< max_flow << endl; //Печать максимального потока
@@ -54,7 +54,7 @@ void printResult(Graph graph, Graph flow_graph, int max_flow){           //Фу�
         }
 }
 
-void FordFulkerson(Graph graph, char source, char sink){
+void FordFulkerson(Graph &graph, char source, char sink){
     Graph flow_graph = graph;                                //Граф с потоками
     char from, to;
     map<char,char> path;                               //Пары, составляющие путь
@@ -82,6 +82,7 @@ void FordFulkerson(Graph graph, char source, char sink){
 
 int main() {
 
+    Graph graph;
     char source, sink;
     int n; //число ребер
 
