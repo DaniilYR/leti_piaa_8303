@@ -1,0 +1,24 @@
+тест 1
+входные данные:
+abacabacabaaba 
+aba
+выходные данные:
+0,4,8,11
+
+--------------------
+
+Тест 2
+входные данные:
+Dance for me, dance for me, dance for me, oh, oh, oh I've never seen anybody do the things you do before They say move for me, move for me, move for me, ay, ay, ay And when you're done I'll make you do it all again
+for
+выходные данные:
+6,20,34,100,119,132,145
+
+---------------------
+
+Тест 3
+входные данные:
+qwertyuilkjhgfdszxcvbn
+,mn
+выходные данные:
+-1
