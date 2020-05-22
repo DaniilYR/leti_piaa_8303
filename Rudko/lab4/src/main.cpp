@@ -21,28 +21,26 @@ vector<int> prefix_function (string s) {
 
 vector<int> KMP(string t, string p, vector<int> &pi){
     vector<int> ans;
+    cout << "Префикс-функция для образца  " << p << endl;
+    for(int i = 0; i < pi.size(); i++)
+        cout << pi[i] << ' ';
+    cout << endl;
     int n = t.length();
     int m = p.length();
-    if(n == m){
-        if(t == p){
-            ans.push_back(0);
-            return ans;
-        }
-        else {
-            return ans;
-        }
-    }
     int k = 0, l = 0;
     while(k < n){
         if(t[k] == p[l]){
+            cout << "Совпадение:   " << t[k] << "==" << p[l] <<" index: "<< k << " " << l << endl;
             k++; l++;
-            if(l == m){ans.push_back(k-l);}
+            if(l == m){ans.push_back(k-l); cout << "Найдена подстрака\n-----------------------" << endl; }
         }
         else {
             if(l == 0){
+                cout << "Несовпадение: " << t[k] << "!=" << p[l] <<" index: "<< k << " " << l << endl;
                 k++;
             }
             else {
+                cout << "Несовпадение: " << t[k] << "!=" << p[l] <<" index: "<< k << " " << l << endl;
                 l = pi[l-1];
             }
         }
@@ -52,17 +50,19 @@ vector<int> KMP(string t, string p, vector<int> &pi){
 
 void split(string t, string p, int k, vector<string> &str, vector<int> &ans_current, vector<int> &ans, vector<int> &pi){
     int len_parts, flag = 0;
+    int k1;
     //---------------------------------------------------
     //определяем длинну каждой части
     if(t.length() % k){
         len_parts = int(t.length()/k)+1; //длинна части строки
         flag = 1;
+        k1 = k-1;
     }
     else {
+        k1 = k;
         len_parts = t.length()/k;
     }
     //---------------------------------------------------
-    int k1 = k - 1;
     int begin = 0;
     string part = "";
     //цикл для получения массива подстрок из текста
@@ -83,31 +83,12 @@ void split(string t, string p, int k, vector<string> &str, vector<int> &ans_curr
     k1 = 1;
     while(k1 < k){
         part = "";
-        part.append(t, (len_parts*k1)-1, p.length());
-        ans_current = KMP(part,p,pi);
+        part.append(t, (len_parts*k1)-p.length()+1, 2*p.length()-2);
+        int top = (len_parts*k1)-p.length()+1;
+        cout << "Подстракас центром на месте разреза - " << part << endl;
+        ans_current = KMP(part, p, pi);
         if(ans_current.size() > 0){
-            cout << "----------------------------------" << endl;
-            cout << "{стык лево} Текущейя часть текста" << endl;
-            cout << part << endl;
-            cout << "{стык лево} Номер символа начала образца в данной части исходного текста" << endl;
-            cout << ans_current[0] << endl;
-            cout << "{стык лево}Номер символа начала образца в исходном тексте" << endl;
-            ans_current[0] += (len_parts*k1-1); //определяем номер символа начала подстроки в исходном тексте
-            cout << ans_current[0] << endl;
-            ans.insert(ans.end(), ans_current.begin(), ans_current.end());
-        }
-        part = "";
-        part.append(t, (len_parts*k1)-p.length()+1, p.length());
-        ans_current = KMP(part,p,pi);
-        if(ans_current.size() > 0){
-            cout << "----------------------------------" << endl;
-            cout << "{стык право} Текущейя часть текста" << endl;
-            cout << part << endl;
-            cout << "{стык право} Номер символа начала образца в данной части исходного текста" << endl;
-            cout << ans_current[0] << endl;
-            cout << "{стык право}Номер символа начала образца в исходном тексте" << endl;
-            ans_current[0] += (len_parts*k1-p.length()+1); //определяем номер символа начала подстроки в исходном тексте
-            cout << ans_current[0] << endl;
+            ans_current[0] += top; //определяем номер символа начала подстроки в исходном тексте
             ans.insert(ans.end(), ans_current.begin(), ans_current.end());
         }
         k1++;
@@ -137,7 +118,20 @@ int main()
         max_threads = min(max_threads, int(alpha)-1);
         if(max_threads == 0)
             max_threads = 1;
-        int k = max_threads;
+        int k ;//= max_threads;
+        if(max_threads == 1){
+            cout << "Длина исходного текста недостаточна для деления строки" << endl;
+            k = 1;
+        }
+        else{
+            cout << "Введите число от 1 до "<< max_threads << endl;
+            cin >> k;
+            while(k < 1 or k > max_threads){
+                cout << "Введите число от 1 до "<< max_threads << endl;
+                cin >> k;
+
+            }
+        }
         //---------------------------------------------------
         vector<int> pi = prefix_function(p);
         vector<int> ans, ans_current;
@@ -163,21 +157,11 @@ int main()
             //---------------------------------------------------
             //заполняем исходный массив ответов
             for(int i = 0; i< str.size(); i++){
+                cout << "------------------------\nЧасть исходного текста  " << str[i] << endl;
                 ans_current = KMP(str[i], p, pi);
                 if(ans_current.size() > 0){
-                    cout << "-----------------------------" << endl;
-                    cout << "Текущейя часть текста" << endl;
-                    cout << str[i] << endl;
-                    cout << "Номер символа начала образца в данной части исходного текста" << endl;
-                    for(int j = 0; j < ans_current.size(); j++)
-                        cout << ans_current[j] << ' ';
-                    cout << endl;
                     for(int j = 0; j < ans_current.size(); j++)
                         ans_current[j] += (len_parts*i); // определяем номер символа начала образца в исходном тексте
-                    cout << "Номер символа начала образца в исходном тексте" << endl;
-                    for(int j = 0; j < ans_current.size(); j++)
-                        cout << ans_current[j] << ' ';
-                    cout << endl;
                     ans.insert(ans.end(), ans_current.begin(), ans_current.end());
                 }
             }
@@ -202,6 +186,11 @@ int main()
             string a,b;
             cout << "Введите строки 1 и 2" << endl;
             cin >> a >> b;
+            vector<int> pi = prefix_function(b);
+            cout << "Префикс-функция для строки 2" << endl;
+            for(int i = 0; i < pi.size(); i++)
+                cout << pi[i] << ' ';
+            cout << endl;
             if(b.length() != a.length())
             {
                 cout << "-1" << endl;
@@ -216,28 +205,34 @@ int main()
             int al = a.length();
             while(true){
                 if(a[it_a] == b[it_b]){
+                    cout << "Совпадение:   " << a[it_a] << "==" << b[it_b] <<" index: "<< it_a << " " << it_b << endl;
                     it_a++;
                     it_b++;
                 }
-                if(it_a == al && it_b != al){
+                if(it_a == al){
                     it_a = 0;
                     cikle++;
                 }
                 if(it_b == al){
+                    cout << "Цикл: ";
                     cout << it_a << endl;
                     return 0;
                 }
-                if(a[it_a] != b[it_b]){
-                    if(it_b == 0)
-                        it_a++;
-                    else {
-                        it_b = 0;
+                else{
+                    if(a[it_a] != b[it_b]){
+                        cout << "Несовпадение: " << a[it_a] << "!=" << b[it_b] <<" index: "<< it_a << " " << it_b << endl;
+                        if(it_b == 0)
+                            it_a++;
+                        else {
+                            it_b = pi[it_b-1];
+                        }
                     }
                 }
-                if(cikle >1){
+                if(cikle > 1){
                     cout << -1 << endl;
                     return 0;
                 }
+
             }
         }
     }
